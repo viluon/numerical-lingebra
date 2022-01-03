@@ -37,46 +37,6 @@ def generate_input(gamma: float):
     b[n - 1] = gamma - 1
     return A, b
 
-# Get the diagonal component of a square matrix
-def diagonal_component(A: np.ndarray) -> np.ndarray:
-    diag = np.zeros(A.shape)
-    for i in range(np.shape(A)[0]):
-        diag[i, i] = A[i, i]
-    return diag
-
-def process_jacobi_constants(A: np.ndarray, b: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    D = diagonal_component(A)
-    Dinv = np.zeros(D.shape)
-    for i in range(D.shape[0]):
-        Dinv[i, i] = 1 / D[i, i]
-
-    T = -Dinv.dot(A - D)
-    C =  Dinv.dot(b)
-    return (T, C)
-
-def jacobi_wrong(A: np.ndarray, b: np.ndarray) -> np.ndarray:
-    progress_bar(0, ITER_LIMIT, clear = False)
-    # the result of the previous iteration
-    last = None
-    # the result of the current iteration
-    next = np.zeros(n)
-    (T, C) = process_jacobi_constants(A, b)
-
-    for iteration in range(ITER_LIMIT):
-        last = next
-        next = T.dot(last) + C
-
-        # check the convergence criterion
-        if np.linalg.norm(A.dot(next) - b) / np.linalg.norm(b) < 10 ** -6:
-            print("\ndone @ iteration", iteration)
-            break
-
-        if iteration % 10 == 0 or iteration > ITER_LIMIT - 10:
-            progress_bar(iteration, ITER_LIMIT - 1)
-
-    print()
-    return next
-
 def split_LDU(A: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     L = np.zeros(A.shape)
     D = np.zeros(A.shape)
@@ -90,13 +50,16 @@ def split_LDU(A: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     assert (L + D + U == A).all()
     return (L, D, U)
 
-def jacobi(A: np.ndarray, b: np.ndarray) -> np.ndarray:
+def jacobi(A: np.ndarray) -> np.ndarray:
     (L, D, U) = split_LDU(A)
     return D
 
-def gauss_seidel(A: np.ndarray, b: np.ndarray) -> np.ndarray:
+def successive_overrelaxation(A: np.ndarray, omega: float = 1.5) -> np.ndarray:
     (L, D, U) = split_LDU(A)
-    return D + L
+    return (1 / omega) * D + L
+
+def gauss_seidel(A: np.ndarray) -> np.ndarray:
+    return successive_overrelaxation(A, omega = 1)
 
 def iteratively(method, A: np.ndarray, b: np.ndarray) -> np.ndarray:
     progress_bar(0, ITER_LIMIT, clear = False)
@@ -108,7 +71,7 @@ def iteratively(method, A: np.ndarray, b: np.ndarray) -> np.ndarray:
     norm = lambda v: np.linalg.norm(v, ord = 2)
 
     b_norm = norm(b)
-    Q = method(A, b)
+    Q = method(A)
     Q_minus_A = Q - A
 
     # compute Q^(-1)
@@ -135,7 +98,7 @@ def iteratively(method, A: np.ndarray, b: np.ndarray) -> np.ndarray:
 
 for gamma in [5, 2, 0.5]:
     print("gamma", gamma)
-    for method in [jacobi, gauss_seidel]:
+    for method in [jacobi, gauss_seidel, successive_overrelaxation]:
         print("method", method.__name__)
         (A, b) = generate_input(gamma)
         iteratively(method, A, b)
