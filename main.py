@@ -1,3 +1,7 @@
+# Komentáře ve zbytku souboru jsou v angličtině.
+# Jediné, co je potřeba ke spuštění, je nedávná verze knihovny numpy,
+# já jsem použil verzi 1.21.5.
+
 import numpy as np
 
 # dimension of the (square) matrix
@@ -76,6 +80,7 @@ def iteratively(method, A: np.ndarray, b: np.ndarray) -> np.ndarray:
 
     # compute Q^(-1)
     Qinv = np.linalg.inv(Q)
+    W = np.identity(n) - Qinv.dot(A)
 
     iteration = 0
     while iteration < ITER_LIMIT:
@@ -94,11 +99,14 @@ def iteratively(method, A: np.ndarray, b: np.ndarray) -> np.ndarray:
         if iteration == ITER_LIMIT:
             print("   exhausted the iteration limit")
 
+    print("   (spectral radius is {})".format(
+        np.real_if_close(max(abs(np.linalg.eigvals(W))))
+    ))
     return next
 
 for gamma in [5, 2, 0.5]:
     print("gamma", gamma)
+    (A, b) = generate_input(gamma)
     for method in [jacobi, gauss_seidel, successive_overrelaxation]:
         print("method", method.__name__)
-        (A, b) = generate_input(gamma)
         iteratively(method, A, b)

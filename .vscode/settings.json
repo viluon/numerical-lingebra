@@ -1,0 +1,23 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#c78df5",
+        "activityBar.activeBorder": "#fcf1e2",
+        "activityBar.background": "#c78df5",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#fcf1e2",
+        "activityBarBadge.foreground": "#15202b",
+        "sash.hoverBorder": "#c78df5",
+        "statusBar.background": "#b05ef1",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#992fed",
+        "statusBarItem.remoteBackground": "#b05ef1",
+        "statusBarItem.remoteForeground": "#15202b",
+        "titleBar.activeBackground": "#b05ef1",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#b05ef199",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "#b05ef1",
+    "python.pythonPath": "/home/viluon/Projects/ni-mpi/ni-mpi/bin/python"
+}
